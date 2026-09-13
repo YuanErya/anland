@@ -1676,8 +1676,20 @@ public class AwlWindowActivity extends Activity {
         }
         if (ev.getAction() == KeyEvent.ACTION_DOWN && ev.getRepeatCount() > 0)
             return true;   /* synthetic repeat — swallow (see above) */
-        int sc = ev.getScanCode();
-        if (sc == 0) sc = fallbackSc(kc);
+        int sc;
+        /* Android key remappers may change keyCode while retaining the
+         * physical key's original scanCode. Prefer the semantic F-key so a
+         * remapped number-row key reaches Wayland as Linux KEY_F1..KEY_F12. */
+        if (kc >= KeyEvent.KEYCODE_F1 && kc <= KeyEvent.KEYCODE_F10) {
+            sc = 59 + (kc - KeyEvent.KEYCODE_F1);
+        } else if (kc == KeyEvent.KEYCODE_F11) {
+            sc = 87;
+        } else if (kc == KeyEvent.KEYCODE_F12) {
+            sc = 88;
+        } else {
+            sc = ev.getScanCode();
+            if (sc == 0) sc = fallbackSc(kc);
+        }
         if (sc > 0) {
             AwlClient.input(id, KEY, sc, 0, 0,
                            ev.getAction() == KeyEvent.ACTION_DOWN ? 1 : 0, 0,

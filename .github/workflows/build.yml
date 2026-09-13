@@ -70,7 +70,7 @@ jobs:
           key: android-${{ env.NDK_VERSION }}-${{ env.BT_VERSION }}-${{ env.PLATFORM_VER }}
 
       - name: SDK components (NDK, build-tools, platform)
-        if: steps.cache.outputs.cache-hit != 'true'
+        if: steps.sdk.outputs.cache-hit != 'true'
         run: |
           yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses >/dev/null || true
           "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" \
